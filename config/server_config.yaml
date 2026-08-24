@@ -1,0 +1,86 @@
+# MedTwin Pro - Unified Server Configuration
+# ==========================================
+
+# Server ports
+ports:
+  websocket: 8765      # Arm control WebSocket
+  http: 5000           # Classification API
+  mjpeg: 8080          # Camera stream
+
+# Model configuration
+models:
+  default: tflite      # Default model: 'tflite' (fast) or 'keras' (accurate)
+  threshold: 0.5       # Classification confidence threshold
+
+  tflite:
+    path: /home/pi/Downloads/robotic-arm/models/tumor_detection_model.tflite
+    description: "Fast TFLite model (~100ms inference)"
+
+  keras:
+    path: /home/pi/Downloads/robotic-arm/full-app-code/densenet121_skin_lesion.keras
+    description: "Accurate DenseNet-121 model (~500ms inference)"
+
+# Camera configuration
+camera:
+  device_index: 0      # Camera device (0 = default USB camera)
+  width: 640           # Capture width
+  height: 480          # Capture height
+  fps: 30              # Target FPS for streaming
+  jpeg_quality: 80     # JPEG quality (0-100)
+
+# Hardware configuration
+hardware:
+  pca9685_address: 0x40  # I2C address of PCA9685 PWM driver
+
+  servos:
+    base:
+      channel: 7
+      min_angle: 0
+      max_angle: 180
+      home_angle: 90
+      description: "Base rotation (yaw)"
+
+    shoulder:
+      channel: 12
+      min_angle: 0
+      max_angle: 180
+      home_angle: 90
+      description: "Shoulder joint (pitch)"
+
+    wrist:
+      channel: 4
+      min_angle: 0
+      max_angle: 180
+      home_angle: 90
+      enabled: true
+      description: "Wrist joint (roll)"
+
+# Angle conversion
+# Frontend sends radians, hardware uses degrees (0-180)
+angle_mapping:
+  yaw:
+    frontend_range: [-3.14159, 3.14159]  # -pi to pi radians
+    servo_range: [0, 180]                 # Servo degrees
+    center: 90                            # Servo center position
+
+  pitch:
+    frontend_range: [-1.5708, 1.5708]     # -pi/2 to pi/2 radians
+    servo_range: [0, 180]
+    center: 90
+
+  roll:
+    frontend_range: [-3.14159, 3.14159]
+    servo_range: [0, 180]
+    center: 90
+
+# Safety settings
+safety:
+  emergency_stop_enabled: true
+  command_timeout_ms: 2000
+  max_reconnect_attempts: 5
+  heartbeat_interval_ms: 5000
+
+# Logging
+logging:
+  level: INFO          # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

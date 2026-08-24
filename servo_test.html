@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Servo Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        h1 { text-align: center; }
+        .servo-card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .servo-card h2 {
+            margin: 0 0 10px 0;
+            color: #4ecca3;
+        }
+        .servo-card p {
+            margin: 5px 0;
+            color: #888;
+            font-size: 14px;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 30px;
+            margin: 10px 0;
+        }
+        .angle {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            background: #0f3460;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #4ecca3;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #3db892; }
+        .buttons { text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Servo Test Panel</h1>
+    <div class="status" id="status">Drag a slider to test</div>
+
+    <div class="servo-card">
+        <h2>1. BASE (Channel 0)</h2>
+        <p>Should be the bottom motor - rotates arm left/right</p>
+        <input type="range" min="0" max="180" value="90" id="base" oninput="move('base', this.value)">
+        <div class="angle" id="base-angle">90°</div>
+        <div class="buttons">
+            <button class="btn" onclick="moveTo('base', 0)">0°</button>
+            <button class="btn" onclick="moveTo('base', 90)">90°</button>
+            <button class="btn" onclick="moveTo('base', 180)">180°</button>
+        </div>
+    </div>
+
+    <div class="servo-card">
+        <h2>2. SHOULDER (Channel 4)</h2>
+        <p>Second from bottom - tilts arm up/down</p>
+        <input type="range" min="0" max="180" value="90" id="shoulder" oninput="move('shoulder', this.value)">
+        <div class="angle" id="shoulder-angle">90°</div>
+        <div class="buttons">
+            <button class="btn" onclick="moveTo('shoulder', 0)">0°</button>
+            <button class="btn" onclick="moveTo('shoulder', 90)">90°</button>
+            <button class="btn" onclick="moveTo('shoulder', 180)">180°</button>
+        </div>
+    </div>
+
+    <div class="servo-card">
+        <h2>3. ELBOW (Channel 8)</h2>
+        <p>Middle joint - bends the arm</p>
+        <input type="range" min="0" max="180" value="90" id="elbow" oninput="move('elbow', this.value)">
+        <div class="angle" id="elbow-angle">90°</div>
+        <div class="buttons">
+            <button class="btn" onclick="moveTo('elbow', 0)">0°</button>
+            <button class="btn" onclick="moveTo('elbow', 90)">90°</button>
+            <button class="btn" onclick="moveTo('elbow', 180)">180°</button>
+        </div>
+    </div>
+
+    <div class="servo-card">
+        <h2>4. WRIST (Channel 12)</h2>
+        <p>End of arm - rotates the gripper/tool</p>
+        <input type="range" min="0" max="180" value="90" id="wrist" oninput="move('wrist', this.value)">
+        <div class="angle" id="wrist-angle">90°</div>
+        <div class="buttons">
+            <button class="btn" onclick="moveTo('wrist', 0)">0°</button>
+            <button class="btn" onclick="moveTo('wrist', 90)">90°</button>
+            <button class="btn" onclick="moveTo('wrist', 180)">180°</button>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="btn" onclick="homeAll()">HOME ALL (90°)</button>
+    </div>
+
+    <script>
+        const API = 'http://' + window.location.hostname + ':8000';
+
+        async function move(name, angle) {
+            document.getElementById(name + '-angle').textContent = angle + '°';
+            document.getElementById('status').textContent = `Moving ${name} to ${angle}°...`;
+            try {
+                const res = await fetch(`${API}/servo?name=${name}&angle=${angle}`);
+                const data = await res.json();
+                document.getElementById('status').textContent = `${name} moved to ${angle}°`;
+            } catch(e) {
+                document.getElementById('status').textContent = 'Error: ' + e.message;
+            }
+        }
+
+        function moveTo(name, angle) {
+            document.getElementById(name).value = angle;
+            move(name, angle);
+        }
+
+        async function homeAll() {
+            document.getElementById('status').textContent = 'Homing all servos...';
+            try {
+                await fetch(`${API}/servo/home`);
+                ['base', 'shoulder', 'elbow', 'wrist'].forEach(name => {
+                    document.getElementById(name).value = 90;
+                    document.getElementById(name + '-angle').textContent = '90°';
+                });
+                document.getElementById('status').textContent = 'All servos at home (90°)';
+            } catch(e) {
+                document.getElementById('status').textContent = 'Error: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>

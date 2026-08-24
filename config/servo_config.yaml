@@ -1,0 +1,77 @@
+# MedTwin Pro - Servo Configuration
+# ==================================
+# 4-DOF Robotic Arm Configuration
+#
+# Hardware: PCA9685 16-Channel PWM Driver
+# I2C Address: 0x40
+# PWM Frequency: 50Hz (standard servo)
+
+# PCA9685 to Raspberry Pi Wiring:
+# -------------------------------
+# PCA9685    | RPi Pin | RPi GPIO
+# -----------|---------|----------
+# VCC        | Pin 1   | 3.3V
+# GND        | Pin 6   | GND
+# SDA        | Pin 3   | GPIO 2 (SDA)
+# SCL        | Pin 5   | GPIO 3 (SCL)
+#
+# IMPORTANT: Connect external 5-6V power supply to V+ terminal for servos!
+# Do NOT power servos from Raspberry Pi.
+
+pca9685:
+  address: 0x40
+  frequency: 50
+
+# Servo Channel Assignments
+# -------------------------
+# Connect servos to these PCA9685 channels:
+#
+#   Servo     | Channel | Wire Colors (typical)
+#   ----------|---------|----------------------
+#   Base      |    0    | Brown=GND, Red=V+, Orange=Signal
+#   Shoulder  |    4    | Brown=GND, Red=V+, Orange=Signal
+#   Elbow     |    8    | Brown=GND, Red=V+, Orange=Signal
+#   Wrist     |   12    | Brown=GND, Red=V+, Orange=Signal
+#
+# Using channels 0, 4, 8, 12 for physical spacing on the board.
+
+servos:
+  base:
+    channel: 0
+    description: "Base rotation (yaw) - rotates entire arm left/right"
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+
+  shoulder:
+    channel: 4
+    description: "Shoulder joint (pitch) - raises/lowers upper arm"
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+
+  elbow:
+    channel: 8
+    description: "Elbow joint - bends the forearm"
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+
+  wrist:
+    channel: 12
+    description: "Wrist rotation (roll) - rotates end effector"
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+
+# Movement mapping from UI (radians) to servo (degrees)
+# -----------------------------------------------------
+# UI sends: -π to +π radians (centered at 0)
+# Servo expects: 0° to 180° (centered at 90°)
+# Formula: servo_deg = 90 + (radians × 180/π)
+
+ui_mapping:
+  yaw: base        # UI yaw slider -> base servo
+  pitch: shoulder  # UI pitch slider -> shoulder servo
+  elbow: elbow     # UI elbow slider -> elbow servo
+  roll: wrist      # UI roll slider -> wrist servo

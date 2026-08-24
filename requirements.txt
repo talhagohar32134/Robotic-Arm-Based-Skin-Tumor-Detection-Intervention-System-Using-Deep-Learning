@@ -1,0 +1,29 @@
+# MedTwin Pro - Python Dependencies
+# ==================================
+# Python 3.13 compatible (ML disabled for now)
+
+# Core CV dependencies
+numpy>=2.0.0
+opencv-python>=4.10.0
+Pillow>=10.4.0
+
+# Hardware control - PCA9685 PWM driver
+adafruit-circuitpython-pca9685>=3.4.12
+adafruit-circuitpython-servokit>=1.3.13
+smbus2>=0.4.2
+
+# Configuration
+PyYAML>=6.0.1
+
+# Utilities
+python-dateutil>=2.8.2
+
+# Async server framework (for unified server)
+aiohttp>=3.9.0
+
+# Data validation
+pydantic>=2.5.0
+
+# NOTE: TensorFlow/TFLite disabled due to Python 3.13 compatibility issues
+# ML classification will run in simulation mode
+# To enable ML, install Python 3.11 and: pip install tensorflow tflite-runtime

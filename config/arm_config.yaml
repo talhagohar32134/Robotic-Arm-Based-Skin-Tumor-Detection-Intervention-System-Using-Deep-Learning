@@ -1,0 +1,110 @@
+# Robotic Arm Configuration
+
+# PCA9685 PWM Driver Settings
+pca9685:
+  i2c_address: 0x40  # Default I2C address (0x40-0x7F possible)
+  pwm_frequency: 50  # Standard servo frequency (Hz)
+
+# Servo Configuration
+servos:
+  base:
+    channel: 4
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+    description: "Base rotation (yaw)"
+
+  shoulder:
+    channel: 5
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+    description: "Shoulder joint (pitch)"
+
+  elbow:
+    channel: 6
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+    description: "Elbow joint (pitch)"
+
+  wrist:
+    channel: 7
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+    description: "Wrist joint (pitch/roll)"
+
+  gripper:
+    channel: 8
+    min_angle: 0
+    max_angle: 180
+    home_angle: 90
+    description: "Gripper/End effector"
+
+# Movement Sequences
+movement_sequences:
+  # Tumor sampling sequence (from original notebook)
+  tumor_sampling:
+    - step: 1
+      name: "Approach position"
+      positions:
+        base: 90
+        shoulder: 90
+        elbow: 90
+      duration: 2.0
+
+    - step: 2
+      name: "Sampling position"
+      positions:
+        base: 90
+        shoulder: 180
+        elbow: 150
+      duration: 2.0
+
+    - step: 3
+      name: "Full extension"
+      positions:
+        base: 90
+        shoulder: 180
+        elbow: 180
+      duration: 2.0
+
+    - step: 4
+      name: "Retract"
+      positions:
+        base: 90
+        shoulder: 180
+        elbow: 150
+      duration: 2.0
+
+  # Home position sequence
+  home:
+    - step: 1
+      name: "Move to home"
+      positions:
+        base: 90
+        shoulder: 90
+        elbow: 90
+        wrist: 90
+        gripper: 90
+      duration: 2.0
+
+# Detection Configuration
+detection:
+  model_path: "/home/pi/Downloads/robotic-arm/models/tumor_detection_model.tflite"
+  confidence_threshold: 0.1  # Minimum confidence for malignant classification
+  detection_cooldown: 10.0   # Seconds between detections to avoid spam
+
+# Camera Configuration
+camera:
+  device_index: 0
+  width: 640
+  height: 480
+  fps: 30
+
+# Safety Settings
+safety:
+  max_consecutive_failures: 3  # Max failures before stopping
+  movement_timeout: 30.0       # Max time for single movement (seconds)
+  require_user_consent: true   # Ask before sampling
