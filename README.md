@@ -4,6 +4,8 @@
 
 **One-liner:** End-to-end pipeline on Raspberry Pi 4 that detects visible skin tumors, draws a bounding box, extracts pixel/world coordinates, and drives a 5-DoF arm with a surgical needle to take a sample—returning safely to home.
 
+> 📄 **Full Thesis Report (COMSATS University Islamabad):** [Project_Thesis_Report_Template___COMSATS_University_Islamabad_Attock_Campus.docx](Project_Thesis_Report_Template___COMSATS_University_Islamabad_Attock_Campus.docx) — complete design, methodology, evaluation, and results documentation.
+
 ---
 
 **Features:**
@@ -47,6 +49,7 @@
 ---
 
 ## Quick Links
+- 📄 [Full Thesis Report](Project_Thesis_Report_Template___COMSATS_University_Islamabad_Attock_Campus.docx)
 - [Notebooks](notebooks/)
 - [Source Code](src/)
 - [Results Gallery](Results/)
