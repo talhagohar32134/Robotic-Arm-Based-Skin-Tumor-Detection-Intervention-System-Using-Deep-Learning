@@ -119,75 +119,73 @@ Everything runs locally on a **Raspberry Pi 4 (4 GB)** — no cloud services, no
 
 *Detections exceeding the 0.60 confidence threshold are serialized together with bounding-box coordinates and forwarded to the digital twin update module, where the lesion position is rendered on the Three.js canvas for operator review.*
 
-### Model Evaluation
+### Model Evaluation (DenseNet121 — Thesis Results)
 
-**ROC Curve**
+All figures below are produced by our trained DenseNet121 model, evaluated exclusively against a 15% reserved HAM10000 holdout subset (2,003 images) with zero data leakage.
+
+**ROC Curve (AUC = 0.915)**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/roc.jpg" alt="ROC curve" width="400"/>
+<img src="Results/roc_curve_densenet121.jpg" alt="ROC curve" width="400"/>
 </div>
 
-*Receiver operating characteristic curve for DenseNet121 on the held-out HAM10000 test subset. An AUC of 0.915 confirms excellent separability between malignant and benign classes across confidence thresholds.*
+*Receiver operating characteristic curve for the trained DenseNet121 model. An AUC of 0.915 confirms excellent separability between malignancy and benign conditions across variable confidence thresholds.*
 
-**Confusion Matrix**
+**Binary Confusion Matrix**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/confusion%20matrix.png" alt="Confusion matrix" width="400"/>
+<img src="Results/confusion_matrix_binary.jpg" alt="Binary confusion matrix" width="400"/>
 </div>
 
-*Confusion matrix visualizing true/false positives and negatives. The model was evaluated exclusively against a 15% reserved HAM10000 holdout subset (2,003 images) with zero data leakage.*
+*Binary classification framework achieving a robust 87.6% accuracy, successfully distinguishing malignant from benign conditions.*
 
-**Classification Report**
+**7-Class Confusion Matrix**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/classification%20report.png" alt="Classification report" width="400"/>
+<img src="Results/confusion_matrix_7class.jpg" alt="7-class confusion matrix" width="400"/>
 </div>
 
-*Precision, recall, and F1-score breakdown per class, confirming stable metric averages across evaluation cycles.*
+*Initial seven-class HAM10000 evaluation highlighting the model's struggle with under-represented classes, which necessitated the shift to the binary approach.*
 
-**Specificity vs Sensitivity**
+**Performance Metrics**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/specificity%20vs%20sensitivity.png" alt="Specificity vs Sensitivity" width="400"/>
+<img src="Results/performance_metrics.jpg" alt="Performance metrics" width="400"/>
+</div>
+
+*Complete diagnostic breakdown: 87.6% binary accuracy, 73.9% malignant sensitivity, 90.4% specificity, and 76.9% seven-class accuracy — validating overall model stability.*
+
+**Key Performance Metrics**
+
+<div style="margin-bottom: 24px;">
+<img src="Results/key_performance_metrics.jpg" alt="Key performance metrics" width="400"/>
 </div>
 
 *Malignant sensitivity of 73.9% against a specificity of 90.4% — the system minimizes false alarms while flagging the majority of dangerous lesions.*
 
-### Training Diagnostics
-
-**Accuracy vs Validation Accuracy**
+**Cancer Detection Breakdown**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/acc%20vs%20val_acc.png" alt="Accuracy vs Validation Accuracy" width="400"/>
+<img src="Results/cancer_detection_breakdown.jpg" alt="Cancer detection breakdown" width="400"/>
 </div>
 
-*Training and validation accuracy curves demonstrate the model’s learning progress and generalization capability during transfer learning from ImageNet weights.*
+*Detected versus total counts for malignant cancer types (akiec, bcc, mel). Accurate predictions favor benign nevi due to the training distribution, highlighting a clear need for further augmentation.*
 
-**Loss vs Validation Loss**
+**Model Confidence Analysis**
 
 <div style="margin-bottom: 24px;">
-<img src="Results/loss%20vs%20val_loss.png" alt="Loss vs Validation Loss" width="400"/>
+<img src="Results/model_confidence_analysis.jpg" alt="Model confidence analysis" width="400"/>
 </div>
 
-*Loss curves for both training and validation sets, indicating convergence and overfitting checks.*
+*Confidence clustering toward ≥ 0.85 proves the model makes classifications with high mathematical certainty — essential for triggering the robotic targeting system safely at our 0.60 threshold.*
 
-### Error Analysis
-
-**False Positive Example**
+### Sample Predictions
 
 <div style="margin-bottom: 24px;">
-<img src="Results/false%20positive.png" alt="False positive example" width="400"/>
+<img src="Results/sample_predictions.jpg" alt="Sample predictions" width="400"/>
 </div>
 
-*Example of a false positive, where a benign region was incorrectly flagged as malignant. Predictions favoring benign nevi reflect the training distribution, motivating future augmentation work.*
-
-**False Negative Example**
-
-<div style="margin-bottom: 24px;">
-<img src="Results/false%20negative.png" alt="False negative example" width="400"/>
-</div>
-
-*Example of a false negative, where a malignant lesion was missed. The 73.9% sensitivity figure drives the planned expansion into SMOTE and generative augmentation.*
+*Sample predictions with true labels, predicted labels, and confidence scores. The visual mapping validates that the DenseNet121 architecture successfully isolates relevant lesion morphology — such as border irregularity and color asymmetry — rather than relying on background noise artifacts.*
 
 ---
 
